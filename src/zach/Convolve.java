@@ -13,28 +13,95 @@ public class Convolve {
 		return toReturn;
 	}
 	
-	//this does the initial basic Convolution
-	//TODO: Make more flexible
-	public static int[][][] transformUsingFilter(int[][][] originalImage, float[][] filter){
-		float currentSum = 0;
-		int[][][] outputImage = new int[originalImage.length][originalImage[0].length][originalImage[0][0].length];
-		for(int row = 0; row < originalImage[0].length; row++){
-			for(int col = 0; col < originalImage[0][row].length; col++){
-				currentSum = 0;
-				for(int rowDiff = -1; rowDiff < 2; rowDiff++){
-					for(int colDiff = -1; colDiff < 2; colDiff++){
+	private static int[][] addPadding(int[][] channelData){
+		//image with zeros as padding
+		int[][] imageToUse = new int[channelData.length + 2][channelData[0].length + 2];
+		
+		//makes the first row of zeros
+		for(int colInd = 0; colInd < imageToUse[0].length; colInd++){
+			imageToUse[0][colInd] = 0;
+		}
+		
+		//puts the image data into the padded matrix
+		int paddedMatrixRow = 1;
+		int paddedMatrixCol = 0;
+		for(int row = 0; row < channelData.length; row++){
+			paddedMatrixCol = 0;
+			imageToUse[paddedMatrixRow][paddedMatrixCol] = 0;
+			for(int col = 0; col < channelData[row].length; col++){
+				paddedMatrixCol++;
+				imageToUse[paddedMatrixRow][paddedMatrixCol] = channelData[row][col];
+			}
+			paddedMatrixCol++;
+			imageToUse[paddedMatrixRow][paddedMatrixCol] = 0;
+			paddedMatrixRow++;
+		}
+		
+		//makes the last row of zeros
+		for(int colInd = 0; colInd < imageToUse[paddedMatrixRow].length; colInd++){
+			imageToUse[paddedMatrixRow][colInd] = 0;
+		}
+		
+		return imageToUse;
+	}
+	
+	public static int[][] apply3by3Filter(int[][] channelData,float[][] filter){
+		
+		int[][] imageToUse = addPadding(channelData);
+
+		int[][] outputImage = new int[channelData.length][channelData[0].length];
+		
+		//sets up the variables used for the filter computation
+		int paddedMatrixRow = 1;
+		int paddedMatrixCol = 1;
+		
+		int currentPixelRow = 0;
+		int currentPixelCol = 0;
+		
+		int currentFilterRow = 0;
+		int currentFilterCol = 0;
+		
+		double filterValue = 0;
+		double imagePixelValue = 0;
+		
+		double currentSummation = 0;
+		
+		//makes the output image
+		for(int row = 0; row < channelData.length; row++){
+			
+			paddedMatrixCol = 1;
+			for(int col = 0; col < channelData[0].length; col++){
+				
+				//finds the filter value for each pixel
+				currentSummation = 0;
+				for(int rowDiff = -1; rowDiff <= 1; rowDiff++){
+					for(int colDiff = -1; colDiff <= 1; colDiff++){
 						
-						//this is how to make sure there are no problems around the boundary
-						if((row + rowDiff >= 0) && (row + rowDiff < originalImage[0].length)){
-							if((col + colDiff >= 0) && (col + colDiff < originalImage[0][row].length)){
-								currentSum += (1.0/9.0)*originalImage[0][row + rowDiff][col + colDiff];
-							}
-						}
+						//sets the indices to be used
+						currentPixelRow = paddedMatrixRow + rowDiff;
+						currentPixelCol = paddedMatrixCol + colDiff;
+						
+						currentFilterRow = rowDiff + 1;
+						currentFilterCol = colDiff + 1;
+						
+						//finds the values for the next term in the summation
+						filterValue = filter[currentFilterRow][currentFilterCol];
+						imagePixelValue = imageToUse[currentPixelRow][currentPixelCol];
+						
+						//computes the next part of the summation
+						currentSummation += imagePixelValue*filterValue;
+						
 					}
 				}
-				outputImage[0][row][col] = (int)currentSum;
+				outputImage[row][col] = (int) currentSummation;
+				
+				paddedMatrixCol++;
+				
 			}
+			
+			paddedMatrixRow++;
 		}
+		
 		return outputImage;
 	}
 	
