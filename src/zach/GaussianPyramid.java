@@ -11,8 +11,12 @@ public class GaussianPyramid {
 	public GaussianPyramid(int[][] channelData){
 		reducedSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		sameSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
+		
 		reducedSizeLevels.add(channelData);
+		sameSizeLevels.add(channelData);
+		
 		generateReducedSizeLevels(channelData);
+		generateSameSizeLevels();
 	}
 	
 	public static GaussianPyramid generatePyramids(int[][] channelData){
@@ -27,6 +31,46 @@ public class GaussianPyramid {
 		return sameSizeLevels;
 	}
 
+	/*
+	 * This generates the same size images.
+	 * It works by taking the reduced size images and scaling them all up
+	 */
+	private void generateSameSizeLevels(){
+		int[][] currentLevel = reducedSizeLevels.get(0);
+		int[][] referenceImage;
+		int scaleFactor = 1;
+		
+		
+		for(int levelNumber = 1; levelNumber < reducedSizeLevels.size(); levelNumber++){
+			currentLevel = new int[currentLevel.length][currentLevel[0].length];
+			referenceImage = reducedSizeLevels.get(levelNumber);
+			scaleFactor = (int)Math.pow(2, levelNumber);
+			
+			for(int referenceRowNum = 0; referenceRowNum < referenceImage.length; referenceRowNum++){
+				for(int referenceColNum = 0; referenceColNum < referenceImage[0].length; referenceColNum++){
+					
+					for(int outputRowNum = referenceRowNum*scaleFactor; 
+							outputRowNum < (referenceRowNum+1)*scaleFactor; 
+							outputRowNum++){
+						for(int outputColNum = referenceColNum*scaleFactor; 
+								outputColNum < (referenceColNum+1)*scaleFactor; 
+								outputColNum++){
+							
+							//puts the same image into entire square
+							currentLevel[outputRowNum][outputColNum] = 
+									referenceImage[referenceRowNum][referenceColNum];
+							
+						}
+					}
+					
+				}
+			}
+			
+			sameSizeLevels.add(currentLevel);
+		}
+	}
+	
+	
 	private void generateReducedSizeLevels(int[][] channelData){
 		if(channelData.length < 2){
 			return;
@@ -56,5 +100,6 @@ public class GaussianPyramid {
 		}
 		return outputImage;
 	}
+	
 	
 }
