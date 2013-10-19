@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		//this will vary depending on which image we care about
-		String imageFileName = "kitty"; 
+		String imageFileName = "text"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
@@ -53,6 +53,12 @@ public class Main {
 			imageData[0] = theLaplacianImages.get(imageNumber);
 			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
 		}
+		
+		//generates an edge detection image
+		newFileName = "edgeDetectionTests/" + imageFileName + "_zeroCrossing.jpg";
+		
+		imageData[0] = EdgeDetectionZach.generateZeroCrossingImage(grayscaleChannelData);
+		ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
 	}
 	
 
