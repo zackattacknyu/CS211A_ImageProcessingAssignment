@@ -11,6 +11,29 @@ public class GaussianPyramid {
 	public GaussianPyramid(int[][] channelData){
 		reducedSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		sameSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
+		reducedSizeLevels.add(channelData);
+		generateReducedSizeLevels(channelData);
+	}
+	
+	public static GaussianPyramid generatePyramids(int[][] channelData){
+		return new GaussianPyramid(channelData);
+	}
+	
+	public List<int[][]> getReducedSizeLevels() {
+		return reducedSizeLevels;
+	}
+
+	public List<int[][]> getSameSizeLevels() {
+		return sameSizeLevels;
+	}
+
+	private void generateReducedSizeLevels(int[][] channelData){
+		if(channelData.length < 2){
+			return;
+		}
+		int[][] nextLevel = computeNextReducedSizeLevel(channelData);
+		reducedSizeLevels.add(nextLevel);
+		generateReducedSizeLevels(nextLevel);
 	}
 	
 	public static int[][] computeNextReducedSizeLevel(int[][] channelData){
