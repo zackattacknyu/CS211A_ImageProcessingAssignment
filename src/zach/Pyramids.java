@@ -3,24 +3,67 @@ package zach;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GaussianPyramid {
+public class Pyramids {
 
-	List<int[][]> reducedSizeLevels;
-	List<int[][]> sameSizeLevels;
+	private List<int[][]> reducedSizeLevels;
+	private List<int[][]> sameSizeLevels;
 	
-	public GaussianPyramid(int[][] channelData){
+	private List<int[][]> laplacianLevels;
+	
+	public Pyramids(int[][] channelData){
 		reducedSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		sameSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
+		laplacianLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		
 		reducedSizeLevels.add(channelData);
 		sameSizeLevels.add(channelData);
 		
 		generateReducedSizeLevels(channelData);
 		generateSameSizeLevels();
+		generateLaplacianLevels(true);
 	}
 	
-	public static GaussianPyramid generatePyramids(int[][] channelData){
-		return new GaussianPyramid(channelData);
+	/**
+	 * This computes the laplacian levels after the Gaussian 
+	 * 		Pyramid has been found
+	 * @param topMinusBottom	whether to do top level minus bottom level.
+	 * 							if false, bottom level minus top is done
+	 */
+	private void generateLaplacianLevels(boolean topMinusBottom){
+		int[][] currentLevel;
+		int[][] topGaussianLevel;
+		int[][] bottomGaussianLevel;
+		
+		for(int level = 0; level < sameSizeLevels.size() - 1; level++){
+			topGaussianLevel = sameSizeLevels.get(level);
+			bottomGaussianLevel = sameSizeLevels.get(level+1);
+			
+			currentLevel = new int[topGaussianLevel.length][topGaussianLevel[0].length];
+			
+			//generates the current laplacian level
+			for(int rowIndex = 0; rowIndex < topGaussianLevel.length; rowIndex++){
+				for(int colIndex = 0; colIndex < topGaussianLevel[0].length; colIndex++){
+					currentLevel[rowIndex][colIndex] = 
+							topGaussianLevel[rowIndex][colIndex] - 
+							bottomGaussianLevel[rowIndex][colIndex];
+					
+					if(!topMinusBottom){
+						currentLevel[rowIndex][colIndex] = -1*currentLevel[rowIndex][colIndex];
+					}
+				}
+			}
+			
+			laplacianLevels.add(currentLevel);
+		}
+		
+	}
+	
+	public List<int[][]> getLaplacianLevels() {
+		return laplacianLevels;
+	}
+
+	public static Pyramids generatePyramids(int[][] channelData){
+		return new Pyramids(channelData);
 	}
 	
 	public List<int[][]> getReducedSizeLevels() {

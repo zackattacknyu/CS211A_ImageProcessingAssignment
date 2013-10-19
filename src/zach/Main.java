@@ -8,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		//this will vary depending on which image we care about
-		String imageFileName = "CARTOON"; 
+		String imageFileName = "kitty"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
@@ -22,9 +22,10 @@ public class Main {
 		
 		int[][] grayscaleChannelData = imageData[0];
 		
-		GaussianPyramid thePyramid = GaussianPyramid.generatePyramids(grayscaleChannelData);
+		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
 		List<int[][]> theImageDatas = thePyramid.getReducedSizeLevels();
 		List<int[][]> theBlurryImages = thePyramid.getSameSizeLevels();
+		List<int[][]> theLaplacianImages = thePyramid.getLaplacianLevels();
 		
 		//generates the reduced size images
 		for(int imageNumber = 0; imageNumber < theImageDatas.size(); imageNumber++){
@@ -41,6 +42,15 @@ public class Main {
 					+ imageNumber + ".jpg";
 			
 			imageData[0] = theBlurryImages.get(imageNumber);
+			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
+		}
+		
+		//generates the laplacian images
+		for(int imageNumber = 0; imageNumber < theLaplacianImages.size(); imageNumber++){
+			newFileName = "laplacianImages/" + imageFileName + "_withLaplacianPyramid_" 
+					+ imageNumber + ".jpg";
+			
+			imageData[0] = theLaplacianImages.get(imageNumber);
 			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
 		}
 	}

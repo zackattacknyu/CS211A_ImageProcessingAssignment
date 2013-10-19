@@ -17,14 +17,14 @@ public class SampleJPGWriting {
 		
 		//these are the file names
 		String originalFileName = "sampleImages/" + imageFileName + ".jpg";
-		String newFileName = "playgroundImages/" + imageFileName + "_withLines.jpg";
+		String newFileName = "playgroundImages/" + imageFileName + "_withLines2.jpg";
 		
 		//this is used for probability that a line will be made all one color
 		double probDenominator = 400;
-		double probNumerator = 53;
+		double probNumerator = 400;
 		
 		//this is the color to write
-		int lineColor = 100;
+		int lineColor = -20;
 		
 		//data about the image
 		int numChannels = 0;
@@ -56,6 +56,10 @@ public class SampleJPGWriting {
 
 		//this writes the image using the image data
 		MyImageWriter.writeImage(originalFileName, newFileName, imageData);
+		
+		int[][][] newImageData = MyImageReader.readImageInto2DArray(newFileName);
+		
+		System.out.println("Value is " + newImageData[0][100][100]);
 
 	}
 
