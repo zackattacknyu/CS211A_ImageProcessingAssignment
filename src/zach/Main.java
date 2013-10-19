@@ -1,5 +1,6 @@
 package zach;
 
+import java.util.Arrays;
 import java.util.List;
 
 import samples.MyImageReader;
@@ -59,6 +60,9 @@ public class Main {
 		
 		imageData[0] = EdgeDetectionZach.generateZeroCrossingImage(grayscaleChannelData);
 		ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
+		
+		Integer[] numbers = {35,40,45};
+		System.out.println("Variance = " + EdgeDetectionZach.calculateVariance(Arrays.asList(numbers)));
 	}
 	
 

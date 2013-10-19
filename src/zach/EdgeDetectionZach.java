@@ -1,7 +1,25 @@
 package zach;
 
+import java.util.List;
+
 public class EdgeDetectionZach {
 
+	public static int calculateVariance(List<Integer> numbers){
+		double average = 0;
+		for(int number: numbers){
+			average += number;
+		}
+		average = average/numbers.size();
+		
+		double variance = 0;
+		
+		for(int number:numbers){
+			variance += Math.pow(number - average, 2);
+		}
+		
+		return (int)variance;
+	}
+	
 	
 	public static int[][] generateZeroCrossingImage(int[][] originalImage){
 		
