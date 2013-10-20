@@ -1,6 +1,5 @@
 package zach;
 
-import java.util.Arrays;
 import java.util.List;
 
 import samples.MyImageReader;
@@ -9,7 +8,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		//this will vary depending on which image we care about
-		String imageFileName = "text"; 
+		String imageFileName = "CARTOON"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
@@ -56,13 +55,13 @@ public class Main {
 		}
 		
 		//generates an edge detection image
-		newFileName = "edgeDetectionTests/" + imageFileName + "_zeroCrossing.jpg";
+		//variance is between 0 and 585,225 for an individual pixel
+		int threshold = 15000;
+		newFileName = "edgeDetectionTests/" + imageFileName + "_edgeImage_threshold" + threshold + ".jpg";
 		
-		imageData[0] = EdgeDetectionZach.generateZeroCrossingImage(grayscaleChannelData);
+		imageData[0] = EdgeDetectionZach.generatedEdgeImage(grayscaleChannelData, threshold);
 		ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		
-		Integer[] numbers = {35,40,45};
-		System.out.println("Variance = " + EdgeDetectionZach.calculateVariance(Arrays.asList(numbers)));
+
 	}
 	
 
