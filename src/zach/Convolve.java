@@ -13,6 +13,19 @@ public class Convolve {
 		return toReturn;
 	}
 	
+	public static float[][] edgeFilter(){
+		float[][] toReturn = new float[3][3];
+		for(int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (i == 1 && j == 1)
+					toReturn[i][j] = 1;
+				else
+					toReturn[i][j] = (float) (-1.0/8.0);
+			}
+		}
+		return toReturn;
+	}
+	
 	private static int[][] addPadding(int[][] channelData){
 		//image with zeros as padding
 		int[][] imageToUse = new int[channelData.length + 2][channelData[0].length + 2];
