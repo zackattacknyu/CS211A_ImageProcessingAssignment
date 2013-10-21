@@ -11,7 +11,8 @@ public class EdgeDetectionKevin {
 
 
 		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
-		List<int[][]> images = thePyramid.getReducedSizeLevels();
+		//List<int[][]> images = thePyramid.getReducedSizeLevels();
+		List<int[][]> images = thePyramid.getSameSizeLevels();
 		ArrayList<int[][]> theEdgeDerivativeResults = new ArrayList<int[][]>();
 
 		for (int imageNumber = 0; imageNumber < images.size(); imageNumber++) {
@@ -41,7 +42,8 @@ public class EdgeDetectionKevin {
 	public static ArrayList<int[][]> computeRawDerivates(int[][] grayscaleChannelData) {
 
 		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
-		List<int[][]> images = thePyramid.getReducedSizeLevels();
+		//List<int[][]> images = thePyramid.getReducedSizeLevels();
+		List<int[][]> images = thePyramid.getSameSizeLevels();
 		ArrayList<int[][]> theEdgeDerivativeResults = new ArrayList<int[][]>();
 
 		for (int imageNumber = 0; imageNumber < images.size(); imageNumber++) {
