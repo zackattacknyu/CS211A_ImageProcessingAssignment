@@ -58,7 +58,6 @@ public class Main {
 		//generates an edge detection image
 		//variance is between 0 and 585,225 for an individual pixel
 		int threshold = 20;
-		newFileName = "edgeDetectionTests/" + imageFileName + "_edgeImage_threshold" + threshold + ".jpg";
 		
 		ArrayList<int[][]> edgeDerivations = computeEdgePyramid(grayscaleChannelData);
 		
