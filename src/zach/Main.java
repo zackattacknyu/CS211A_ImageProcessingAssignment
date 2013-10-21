@@ -8,7 +8,11 @@ import samples.MyImageReader;
 public class Main {
 
 	public static void main(String[] args) {
-		//this will vary depending on which image we care about
+		
+		/*
+		 * IMPORTANT LINE:
+		 * Change this to vary the image that is currently being processed
+		 */
 		String imageFileName = "kitty"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
@@ -22,53 +26,65 @@ public class Main {
 		
 		int[][] grayscaleChannelData = imageData[0];
 		
+		/*
+		 * This function computes the Gaussian and Laplacian Pyramids
+		 * 		for Part 1 and Part 2
+		 */
 		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
 		
-		//generates the reduced size images
+		/*
+		 * This is used to make all the reduced size images
+		 * 	for Part 1, Step 1
+		 */
 		makeImages(imageData,thePyramid.getReducedSizeLevels(),"pyramidReducedSizeImages",
 				imageFileName + "_withGaussianPyramid",imageFileNameToUse);
 		
-		//generates the same size images
+		/*
+		 * This is used to make all the same size images
+		 * 	for Part 1, Step 2
+		 */
 		makeImages(imageData,thePyramid.getSameSizeLevels(),"pyramidSameSizeImages",
 				imageFileName + "_withGaussianPyramid",imageFileNameToUse);
 		
-		//generates the laplacian images
+		/*
+		 * This makes the laplacian images for Part 2
+		 */
 		makeImages(imageData,thePyramid.getLaplacianLevels(),"laplacianImages",
 				imageFileName + "_withLaplacianPyramid",imageFileNameToUse);
 		
-		//generates an edge detection image
-		//variance is between 0 and 585,225 for an individual pixel
-		int threshold = 20;
 		
-		ArrayList<int[][]> edgeDerivations = EdgeDetectionKevin.computeEdgePyramid(grayscaleChannelData);
-		
+		/*
+		 * these are the raw derivatives as found for Part 3, Step 1
+		 */
 		ArrayList<int[][]> rawDerivatives = EdgeDetectionKevin.computeRawDerivates(grayscaleChannelData);
+		makeImages(imageData,rawDerivatives,"rawDerivatives",imageFileName + "_rawDerivatives",imageFileNameToUse);
 		
+		/*
+		 * these are the segmented images as found for Part 3, Step 2
+		 */
+		ArrayList<int[][]> edgeDerivations = EdgeDetectionKevin.computeEdgePyramid(grayscaleChannelData);
+		makeImages(imageData,edgeDerivations,"edgeDerivations",imageFileName + "_edgeDerivatives",imageFileNameToUse);
+		
+		/*
+		 * these are the zero crossing images as found for Part 3, Step 3	
+		 */
 		ArrayList<int[][]> zeroCrossingImages = new ArrayList<int[][]>(edgeDerivations.size());
-		
-		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(edgeDerivations.size());
-		
 		for(int[][] edgeDerivation: edgeDerivations){
 			zeroCrossingImages.add(EdgeDetectionZach.generateZeroCrossingImage(edgeDerivation));
 		}
+		makeImages(imageData,zeroCrossingImages,"zeroCrossingImages",imageFileName + "_zeroCrossings",imageFileNameToUse);
 		
+		/*
+		 * these are the edge Detection Images as found for Part 3, Step 4
+		 * variance is between 0 and 585,225 for an individual pixel
+		 */
+		int threshold = 100;
+		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(edgeDerivations.size());
 		for(int[][] edgeDerivation: edgeDerivations){
 			edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(edgeDerivation, threshold));
 		}
-		
-		//generate the edge derivative images
-		makeImages(imageData,edgeDerivations,"edgeDerivations",imageFileName + "_edgeDerivatives",imageFileNameToUse);
-		
-		//generate the raw derivative images
-		makeImages(imageData,rawDerivatives,"rawDerivatives",imageFileName + "_rawDerivatives",imageFileNameToUse);
-		
-		//generate the zero crossing images
-		makeImages(imageData,zeroCrossingImages,"zeroCrossingImages",imageFileName + "_zeroCrossings",imageFileNameToUse);
-		
-		//generate the edge detection images
 		makeImages(imageData,edgeDetectionImages,"edgeDetectionImages",
 				imageFileName + "_edgeDetectionWithVarianceThreshold" + threshold,imageFileNameToUse);
-
 
 	}	
 	
