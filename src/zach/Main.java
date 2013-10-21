@@ -12,22 +12,11 @@ public class Main {
 		String imageFileName = "kitty"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
-		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
+		computeAllImages(imageFileName,imageFileNameToUse);
 	}
-	
-	public static void makeImages(int[][][] imageData, List<int[][]> imageMatrices, 
-			String folderName, String imageName, String originalImageName){
-		String newFileName;
-		for(int imageNumber = 0; imageNumber < imageMatrices.size(); imageNumber++){
-			newFileName = folderName + "/" + imageName + "_" + imageNumber + ".jpg";
-			imageData[0] = imageMatrices.get(imageNumber);
-			ZachImageWriter.writeImageUsingImageSize(originalImageName, newFileName, imageData);
-		}
-	}
-	
-	public static void computeGaussianPyramidImages(String imageFileName, String imageFileNameToUse){
-		String newFileName;
-		
+
+	public static void computeAllImages(String imageFileName, String imageFileNameToUse){
+
 		//this is used to generate the image data
 		int[][][] imageData = MyImageReader.readImageInto2DArray(imageFileNameToUse);
 		
@@ -55,43 +44,45 @@ public class Main {
 		
 		ArrayList<int[][]> rawDerivatives = EdgeDetectionKevin.computeRawDerivates(grayscaleChannelData);
 		
-		for (int i = 0; i < edgeDerivations.size(); i++) {
-			newFileName = "edgeImages/" + imageFileName + "_withVarianceThreshold_" 
-					+ i + ".jpg";
-			
-			imageData[0] = EdgeDetectionZach.generatedEdgeImage(edgeDerivations.get(i), threshold);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
+		ArrayList<int[][]> zeroCrossingImages = new ArrayList<int[][]>(edgeDerivations.size());
+		
+		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(edgeDerivations.size());
+		
+		for(int[][] edgeDerivation: edgeDerivations){
+			zeroCrossingImages.add(EdgeDetectionZach.generateZeroCrossingImage(edgeDerivation));
 		}
 		
-		// Edge derivative images
-		for (int i = 0; i < edgeDerivations.size(); i++) {
-			newFileName = "edgeImages/" + imageFileName + "_edgeDerivatives_" 
-					+ i + ".jpg";
-			
-			imageData[0] = edgeDerivations.get(i);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
+		for(int[][] edgeDerivation: edgeDerivations){
+			edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(edgeDerivation, threshold));
 		}
 		
-		// Raw derivative images
-		for (int i = 0; i < edgeDerivations.size(); i++) {
-			newFileName = "edgeImages/" + imageFileName + "_rawDerivatives_" 
-					+ i + ".jpg";
-			
-			imageData[0] = rawDerivatives.get(i);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		}
+		//generate the edge derivative images
+		makeImages(imageData,edgeDerivations,"edgeDerivations",imageFileName + "_edgeDerivatives",imageFileNameToUse);
 		
-		// Zero Crossings
-		for (int i = 0; i < edgeDerivations.size(); i++) {
-			newFileName = "edgeImages/" + imageFileName + "_withZeroCrossings_" 
-					+ i + ".jpg";
-			
-			imageData[0] = EdgeDetectionZach.generateZeroCrossingImage(edgeDerivations.get(i));
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		}
+		//generate the raw derivative images
+		makeImages(imageData,rawDerivatives,"rawDerivatives",imageFileName + "_rawDerivatives",imageFileNameToUse);
+		
+		//generate the zero crossing images
+		makeImages(imageData,zeroCrossingImages,"zeroCrossingImages",imageFileName + "_zeroCrossings",imageFileNameToUse);
+		
+		//generate the edge detection images
+		makeImages(imageData,edgeDetectionImages,"edgeDetectionImages",
+				imageFileName + "_edgeDetectionWithVarianceThreshold" + threshold,imageFileNameToUse);
 
 
+	}	
+	
+	public static void makeImages(int[][][] imageData, List<int[][]> imageMatrices, 
+			String folderName, String imageName, String originalImageName){
+		String newFileName;
+		for(int imageNumber = 0; imageNumber < imageMatrices.size(); imageNumber++){
+			newFileName = folderName + "/" + imageName + "_" + imageNumber + ".jpg";
+			imageData[0] = imageMatrices.get(imageNumber);
+			ZachImageWriter.writeImageUsingImageSize(originalImageName, newFileName, imageData);
+		}
 	}
+	
+
 	
 
 	
