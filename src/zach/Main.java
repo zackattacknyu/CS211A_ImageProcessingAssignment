@@ -9,7 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		//this will vary depending on which image we care about
-		String imageFileName = "CARTOON"; 
+		String imageFileName = "kitty"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
