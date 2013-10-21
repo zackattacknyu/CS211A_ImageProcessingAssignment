@@ -15,6 +15,16 @@ public class Main {
 		computeGaussianPyramidImages(imageFileName,imageFileNameToUse);
 	}
 	
+	public static void makeImages(int[][][] imageData, List<int[][]> imageMatrices, 
+			String folderName, String imageName, String originalImageName){
+		String newFileName;
+		for(int imageNumber = 0; imageNumber < imageMatrices.size(); imageNumber++){
+			newFileName = folderName + "/" + imageName + "_" + imageNumber + ".jpg";
+			imageData[0] = imageMatrices.get(imageNumber);
+			ZachImageWriter.writeImageUsingImageSize(originalImageName, newFileName, imageData);
+		}
+	}
+	
 	public static void computeGaussianPyramidImages(String imageFileName, String imageFileNameToUse){
 		String newFileName;
 		
@@ -24,44 +34,26 @@ public class Main {
 		int[][] grayscaleChannelData = imageData[0];
 		
 		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
-		List<int[][]> theImageDatas = thePyramid.getReducedSizeLevels();
-		List<int[][]> theBlurryImages = thePyramid.getSameSizeLevels();
-		List<int[][]> theLaplacianImages = thePyramid.getLaplacianLevels();
 		
 		//generates the reduced size images
-		for(int imageNumber = 0; imageNumber < theImageDatas.size(); imageNumber++){
-			newFileName = "pyramidReducedSizeImages/" + imageFileName + "_withGaussianPyramid_" 
-					+ imageNumber + ".jpg";
-			
-			imageData[0] = theImageDatas.get(imageNumber);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		}
+		makeImages(imageData,thePyramid.getReducedSizeLevels(),"pyramidReducedSizeImages",
+				imageFileName + "_withGaussianPyramid",imageFileNameToUse);
 		
 		//generates the same size images
-		for(int imageNumber = 0; imageNumber < theBlurryImages.size(); imageNumber++){
-			newFileName = "pyramidSameSizeImages/" + imageFileName + "_withGaussianPyramid_" 
-					+ imageNumber + ".jpg";
-			
-			imageData[0] = theBlurryImages.get(imageNumber);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		}
+		makeImages(imageData,thePyramid.getSameSizeLevels(),"pyramidSameSizeImages",
+				imageFileName + "_withGaussianPyramid",imageFileNameToUse);
 		
 		//generates the laplacian images
-		for(int imageNumber = 0; imageNumber < theLaplacianImages.size(); imageNumber++){
-			newFileName = "laplacianImages/" + imageFileName + "_withLaplacianPyramid_" 
-					+ imageNumber + ".jpg";
-			
-			imageData[0] = theLaplacianImages.get(imageNumber);
-			ZachImageWriter.writeImageUsingImageSize(imageFileNameToUse, newFileName, imageData);
-		}
+		makeImages(imageData,thePyramid.getLaplacianLevels(),"laplacianImages",
+				imageFileName + "_withLaplacianPyramid",imageFileNameToUse);
 		
 		//generates an edge detection image
 		//variance is between 0 and 585,225 for an individual pixel
 		int threshold = 20;
 		
-		ArrayList<int[][]> edgeDerivations = computeEdgePyramid(grayscaleChannelData);
+		ArrayList<int[][]> edgeDerivations = EdgeDetectionKevin.computeEdgePyramid(grayscaleChannelData);
 		
-		ArrayList<int[][]> rawDerivatives = computeRawDerivates(grayscaleChannelData);
+		ArrayList<int[][]> rawDerivatives = EdgeDetectionKevin.computeRawDerivates(grayscaleChannelData);
 		
 		for (int i = 0; i < edgeDerivations.size(); i++) {
 			newFileName = "edgeImages/" + imageFileName + "_withVarianceThreshold_" 
@@ -101,58 +93,7 @@ public class Main {
 
 	}
 	
-	public static ArrayList<int[][]> computeEdgePyramid(int[][] grayscaleChannelData) {
-		int positiveThreshVal = 255;
 
-
-		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
-		List<int[][]> images = thePyramid.getReducedSizeLevels();
-		ArrayList<int[][]> theEdgeDerivativeResults = new ArrayList<int[][]>();
-
-		for (int imageNumber = 0; imageNumber < images.size(); imageNumber++) {
-			
-			int[][] currentData = images.get(imageNumber);
-
-			float[][] edgeFilter = Convolve.edgeFilter();
-			int[][] resultImage = Convolve.apply3by3Filter(
-					currentData, edgeFilter);
-			for (int row = 0; row < resultImage.length; row++) {
-				for (int column = 0; column < resultImage[0].length; column++) {
-					if (resultImage[row][column] < 0) {
-						resultImage[row][column] = 0;
-					} else {
-						resultImage[row][column] = positiveThreshVal;
-					}
-				}
-			}
-
-			theEdgeDerivativeResults.add(resultImage);
-		}
-
-		return theEdgeDerivativeResults;
-
-	}
-	
-	public static ArrayList<int[][]> computeRawDerivates(int[][] grayscaleChannelData) {
-
-		Pyramids thePyramid = Pyramids.generatePyramids(grayscaleChannelData);
-		List<int[][]> images = thePyramid.getReducedSizeLevels();
-		ArrayList<int[][]> theEdgeDerivativeResults = new ArrayList<int[][]>();
-
-		for (int imageNumber = 0; imageNumber < images.size(); imageNumber++) {
-			
-			int[][] currentData = images.get(imageNumber);
-
-			float[][] edgeFilter = Convolve.edgeFilter();
-			int[][] resultImage = Convolve.apply3by3Filter(
-					currentData, edgeFilter);
-
-			theEdgeDerivativeResults.add(resultImage);
-		}
-
-		return theEdgeDerivativeResults;
-
-	}
 	
 
 
