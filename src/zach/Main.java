@@ -13,7 +13,7 @@ public class Main {
 		 * IMPORTANT LINE:
 		 * Change this to vary the image that is currently being processed
 		 */
-		String imageFileName = "CARTOON"; 
+		String imageFileName = "text"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeAllImages(imageFileName,imageFileNameToUse);

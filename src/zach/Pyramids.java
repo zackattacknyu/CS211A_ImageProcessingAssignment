@@ -10,7 +10,11 @@ public class Pyramids {
 	
 	private List<int[][]> laplacianLevels;
 	
+	private int maxSize;
+	
 	public Pyramids(int[][] channelData){
+		
+		maxSize = channelData.length;
 		reducedSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		sameSizeLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
 		laplacianLevels = new ArrayList<int[][]>((int)Math.log(channelData.length));
@@ -76,40 +80,14 @@ public class Pyramids {
 
 	/*
 	 * This generates the same size images.
-	 * It works by taking the reduced size images and scaling them all up
+	 * It works by taking the reduced size images and scaling them all up using bilinear interpolation
 	 */
 	private void generateSameSizeLevels(){
-		int[][] currentLevel = reducedSizeLevels.get(0);
-		int[][] referenceImage;
-		int scaleFactor = 1;
-		
-		
 		for(int levelNumber = 1; levelNumber < reducedSizeLevels.size(); levelNumber++){
-			currentLevel = new int[currentLevel.length][currentLevel[0].length];
-			referenceImage = reducedSizeLevels.get(levelNumber);
-			scaleFactor = (int)Math.pow(2, levelNumber);
-			
-			for(int referenceRowNum = 0; referenceRowNum < referenceImage.length; referenceRowNum++){
-				for(int referenceColNum = 0; referenceColNum < referenceImage[0].length; referenceColNum++){
-					
-					for(int outputRowNum = referenceRowNum*scaleFactor; 
-							outputRowNum < (referenceRowNum+1)*scaleFactor; 
-							outputRowNum++){
-						for(int outputColNum = referenceColNum*scaleFactor; 
-								outputColNum < (referenceColNum+1)*scaleFactor; 
-								outputColNum++){
-							
-							//puts the same image into entire square
-							currentLevel[outputRowNum][outputColNum] = 
-									referenceImage[referenceRowNum][referenceColNum];
-							
-						}
-					}
-					
-				}
-			}
-			
-			sameSizeLevels.add(currentLevel);
+			sameSizeLevels.add( 
+					BilinearInterpolation.generateInterpolatedImage(
+							reducedSizeLevels.get(levelNumber),
+							maxSize) );
 		}
 	}
 	
@@ -122,6 +100,8 @@ public class Pyramids {
 		reducedSizeLevels.add(nextLevel);
 		generateReducedSizeLevels(nextLevel);
 	}
+	
+	
 	
 	public static int[][] computeNextReducedSizeLevel(int[][] channelData){
 		int[][] outputImage = new int[channelData.length/2][channelData[0].length/2];
