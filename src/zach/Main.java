@@ -13,7 +13,7 @@ public class Main {
 		 * IMPORTANT LINE:
 		 * Change this to vary the image that is currently being processed
 		 */
-		String imageFileName = "flowergray"; 
+		String imageFileName = "CARTOON"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeAllImages(imageFileName,imageFileNameToUse);
@@ -80,15 +80,27 @@ public class Main {
 		 * these are the edge Detection Images as found for Part 3, Step 4
 		 * variance is between 0 and 585,225 for an individual pixel
 		 */
-		int threshold = 3000;
-		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(segmentedImages.size());
-		for(int index = 0; index < segmentedImages.size(); index++){
-			edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(rawDerivatives.get(index), zeroCrossingDatas.get(index), threshold));
+		ArrayList<int[][]> edgeDetectionImages;
+		for(int threshold = 100; threshold <= 500; threshold += 100){
+			edgeDetectionImages = new ArrayList<int[][]>(segmentedImages.size());
+			for(int index = 0; index < segmentedImages.size(); index++){
+				edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(rawDerivatives.get(index), zeroCrossingDatas.get(index), threshold));
+			}
+			makeEdgeDetectionImages(imageData,edgeDetectionImages,"edgeDetectionImages",
+					imageFileName,imageFileNameToUse,threshold);
 		}
-		makeImages(imageData,edgeDetectionImages,"edgeDetectionImages",
-				imageFileName + "_edgeDetectionWithVarianceThreshold" + threshold,imageFileNameToUse);
-
+		
 	}	
+	
+	public static void makeEdgeDetectionImages(int[][][] imageData, List<int[][]> imageMatrices, 
+			String folderName, String imageName, String originalImageName, int threshold){
+		String newFileName;
+		for(int imageNumber = 0; imageNumber < imageMatrices.size(); imageNumber++){
+			newFileName = folderName + "/" + imageName + "_" + imageNumber + "_withVarianceThreshold_" + threshold + ".jpg";
+			imageData[0] = imageMatrices.get(imageNumber);
+			ZachImageWriter.writeImageUsingImageSize(originalImageName, newFileName, imageData);
+		}
+	}
 	
 	public static void makeImages(int[][][] imageData, List<int[][]> imageMatrices, 
 			String folderName, String imageName, String originalImageName){
