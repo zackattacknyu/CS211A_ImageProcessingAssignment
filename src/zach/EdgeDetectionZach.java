@@ -60,6 +60,82 @@ public class EdgeDetectionZach {
 		return edgeImage;
 	}
 	
+	public static int[][] generatedEdgeImage(int[][] originalImage,boolean[][] isZeroCrossing,int threshold){
+		int[][] edgeImage = new int[originalImage.length][originalImage[0].length];
+		
+		List<Integer> currentList;
+		int currentVariance;
+		
+		for(int rowInd = 0; rowInd < edgeImage.length; rowInd++){
+			for(int colInd = 0; colInd < edgeImage[0].length; colInd++){
+				
+				//sees if we should check the neighborhood
+				if(isZeroCrossing[rowInd][colInd]){
+				
+					currentList = new ArrayList<Integer>(9);
+					
+					//checks all the neighbors
+					for(int currentPixelRow = rowInd-1; currentPixelRow <= rowInd + 1; currentPixelRow++){
+						for(int currentPixelCol = colInd-1; currentPixelCol <= colInd + 1; currentPixelCol++){
+							
+							//makes sure there won't be an array index out of bounds exception
+							if(currentPixelRow >= 0 && currentPixelRow < edgeImage.length){
+								if(currentPixelCol >= 0 && currentPixelCol < edgeImage[0].length){
+									
+									currentList.add(originalImage[currentPixelRow][currentPixelCol]);
+									
+								}
+							}
+							
+						}
+					}
+					
+					//gets the variance
+					currentVariance = calculateVariance(currentList);
+					if(currentVariance > threshold){
+						edgeImage[rowInd][colInd] = 255;
+					}
+					
+				}
+
+			}
+		}
+		
+		return edgeImage;
+	}
+	
+	public static boolean[][] generateZeroCrossingData(int[][] originalImage){
+		
+		boolean[][] zeroCrossingData = new boolean[originalImage.length][originalImage[0].length];
+		
+		int currentPixel;
+		
+		for(int rowInd = 0; rowInd < zeroCrossingData.length; rowInd++){
+			for(int colInd = 0; colInd < zeroCrossingData[0].length; colInd++){
+				
+				currentPixel = originalImage[rowInd][colInd];
+
+				//checks all the neighbors
+				for(int currentPixelRow = rowInd-1; currentPixelRow <= rowInd + 1; currentPixelRow++){
+					for(int currentPixelCol = colInd-1; currentPixelCol <= colInd + 1; currentPixelCol++){
+						
+						//makes sure there won't be an array index out of bounds exception
+						if(currentPixelRow >= 0 && currentPixelRow < zeroCrossingData.length){
+							if(currentPixelCol >= 0 && currentPixelCol < zeroCrossingData[0].length){
+								if(currentPixel != originalImage[currentPixelRow][currentPixelCol]){
+									zeroCrossingData[rowInd][colInd] = true;
+								}
+							}
+						}
+						
+					}
+				}
+				
+			}
+		}
+		
+		return zeroCrossingData;
+	}
 	
 	public static int[][] generateZeroCrossingImage(int[][] originalImage){
 		

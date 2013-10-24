@@ -13,7 +13,7 @@ public class Main {
 		 * IMPORTANT LINE:
 		 * Change this to vary the image that is currently being processed
 		 */
-		String imageFileName = "text"; 
+		String imageFileName = "flowergray"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeAllImages(imageFileName,imageFileNameToUse);
@@ -62,15 +62,17 @@ public class Main {
 		/*
 		 * these are the segmented images as found for Part 3, Step 2
 		 */
-		ArrayList<int[][]> edgeDerivations = EdgeDetectionKevin.computeEdgePyramid(grayscaleChannelData);
-		makeImages(imageData,edgeDerivations,"edgeDerivations",imageFileName + "_edgeDerivatives",imageFileNameToUse);
+		ArrayList<int[][]> segmentedImages = EdgeDetectionKevin.computeEdgePyramid(grayscaleChannelData);
+		makeImages(imageData,segmentedImages,"segmentedImages",imageFileName + "_segmented",imageFileNameToUse);
 		
 		/*
 		 * these are the zero crossing images as found for Part 3, Step 3	
 		 */
-		ArrayList<int[][]> zeroCrossingImages = new ArrayList<int[][]>(edgeDerivations.size());
-		for(int[][] edgeDerivation: edgeDerivations){
-			zeroCrossingImages.add(EdgeDetectionZach.generateZeroCrossingImage(edgeDerivation));
+		ArrayList<int[][]> zeroCrossingImages = new ArrayList<int[][]>(segmentedImages.size());
+		ArrayList<boolean[][]> zeroCrossingDatas = new ArrayList<boolean[][]>(segmentedImages.size());
+		for(int[][] segmentedImage: segmentedImages){
+			zeroCrossingImages.add(EdgeDetectionZach.generateZeroCrossingImage(segmentedImage));
+			zeroCrossingDatas.add(EdgeDetectionZach.generateZeroCrossingData(segmentedImage));
 		}
 		makeImages(imageData,zeroCrossingImages,"zeroCrossingImages",imageFileName + "_zeroCrossings",imageFileNameToUse);
 		
@@ -78,10 +80,10 @@ public class Main {
 		 * these are the edge Detection Images as found for Part 3, Step 4
 		 * variance is between 0 and 585,225 for an individual pixel
 		 */
-		int threshold = 10000;
-		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(edgeDerivations.size());
-		for(int[][] edgeDerivation: edgeDerivations){
-			edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(edgeDerivation, threshold));
+		int threshold = 3000;
+		ArrayList<int[][]> edgeDetectionImages = new ArrayList<int[][]>(segmentedImages.size());
+		for(int index = 0; index < segmentedImages.size(); index++){
+			edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(rawDerivatives.get(index), zeroCrossingDatas.get(index), threshold));
 		}
 		makeImages(imageData,edgeDetectionImages,"edgeDetectionImages",
 				imageFileName + "_edgeDetectionWithVarianceThreshold" + threshold,imageFileNameToUse);

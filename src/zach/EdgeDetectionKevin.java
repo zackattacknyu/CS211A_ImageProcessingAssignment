@@ -24,7 +24,7 @@ public class EdgeDetectionKevin {
 					currentData, edgeFilter);
 			for (int row = 0; row < resultImage.length; row++) {
 				for (int column = 0; column < resultImage[0].length; column++) {
-					if (resultImage[row][column] < 0) {
+					if (resultImage[row][column] <= 0) {
 						resultImage[row][column] = 0;
 					} else {
 						resultImage[row][column] = positiveThreshVal;

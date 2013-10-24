@@ -7,7 +7,7 @@ public class TestCode {
 		int b = 3;
 		double aa = a;
 		double bb = b;
-		double frac = aa/bb;
+		double frac = a/bb;
 		System.out.println(frac);
 
 	}
