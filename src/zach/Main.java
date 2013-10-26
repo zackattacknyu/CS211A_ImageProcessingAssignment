@@ -13,7 +13,7 @@ public class Main {
 		 * IMPORTANT LINE:
 		 * Change this to vary the image that is currently being processed
 		 */
-		String imageFileName = "CARTOON"; 
+		String imageFileName = "text"; 
 		
 		String imageFileNameToUse = "sampleImages/" + imageFileName + ".jpg";
 		computeAllImages(imageFileName,imageFileNameToUse);
@@ -81,7 +81,7 @@ public class Main {
 		 * variance is between 0 and 585,225 for an individual pixel
 		 */
 		ArrayList<int[][]> edgeDetectionImages;
-		for(int threshold = 100; threshold <= 500; threshold += 100){
+		for(int threshold = 50; threshold <= 100; threshold += 10){
 			edgeDetectionImages = new ArrayList<int[][]>(segmentedImages.size());
 			for(int index = 0; index < segmentedImages.size(); index++){
 				edgeDetectionImages.add(EdgeDetectionZach.generatedEdgeImage(rawDerivatives.get(index), zeroCrossingDatas.get(index), threshold));
