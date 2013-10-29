@@ -37,6 +37,7 @@ public class Pyramids {
 		int[][] currentLevel;
 		int[][] topGaussianLevel;
 		int[][] bottomGaussianLevel;
+		double minPixel,maxPixel,range,currentPixel,scaledPixel;
 		
 		for(int level = 0; level < sameSizeLevels.size() - 1; level++){
 			topGaussianLevel = sameSizeLevels.get(level);
@@ -44,7 +45,7 @@ public class Pyramids {
 			
 			currentLevel = new int[topGaussianLevel.length][topGaussianLevel[0].length];
 			
-			//generates the current laplacian level
+			//generates the raw pixel values
 			for(int rowIndex = 0; rowIndex < topGaussianLevel.length; rowIndex++){
 				for(int colIndex = 0; colIndex < topGaussianLevel[0].length; colIndex++){
 					currentLevel[rowIndex][colIndex] = 
@@ -56,6 +57,34 @@ public class Pyramids {
 					}
 				}
 			}
+			
+			//finds the minimum and maximum differences to use for scaling
+			minPixel = -255;
+			maxPixel = 255;
+			for(int rowIndex = 0; rowIndex < topGaussianLevel.length; rowIndex++){
+				for(int colIndex = 0; colIndex < topGaussianLevel[0].length; colIndex++){
+					if(currentLevel[rowIndex][colIndex] < minPixel){
+						minPixel = currentLevel[rowIndex][colIndex];
+					}
+					if(currentLevel[rowIndex][colIndex] > maxPixel){
+						maxPixel = currentLevel[rowIndex][colIndex];
+					}
+				}
+			}
+			range = maxPixel - minPixel;
+			
+			//scales the values to [0,255]
+			for(int rowIndex = 0; rowIndex < topGaussianLevel.length; rowIndex++){
+				for(int colIndex = 0; colIndex < topGaussianLevel[0].length; colIndex++){
+					currentPixel = currentLevel[rowIndex][colIndex];
+					
+					//takes the current range of values and scales it to between 0 and 255
+					scaledPixel = ((currentPixel - minPixel)/range)*255.0;
+					
+					currentLevel[rowIndex][colIndex] = (int)scaledPixel;
+				}
+			}
+			
 			
 			laplacianLevels.add(currentLevel);
 		}
