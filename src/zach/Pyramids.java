@@ -59,8 +59,8 @@ public class Pyramids {
 			}
 			
 			//finds the minimum and maximum differences to use for scaling
-			minPixel = -255;
-			maxPixel = 255;
+			minPixel = 255;
+			maxPixel = -255;
 			for(int rowIndex = 0; rowIndex < topGaussianLevel.length; rowIndex++){
 				for(int colIndex = 0; colIndex < topGaussianLevel[0].length; colIndex++){
 					if(currentLevel[rowIndex][colIndex] < minPixel){
